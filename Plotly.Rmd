@@ -27,30 +27,28 @@ rest_inspec %>%
   filter(grade == c("A", "B", "C")) %>% 
   group_by(boro, grade) %>% 
   filter(boro !="Missing") %>% 
-  ggplot(aes(x = boro, fill = grade)) +
-  geom_bar() +
-  labs(
-    title = "Number of Grade A, B and C restaurant",
-    x = "Location",
-    y = "Number of Restaurant"
-  )
-  
+  plot_ly(
+    x = ~boro, 
+    y = ~grade,
+    color = ~grade,
+    type = "bar",
+    colors = "viridis") 
 ```
 
 
 ## Make boxplot about the distribution of score of restaurant in different locations
 ```{r}
 rest_inspec %>% 
-  select(boro, score) %>% 
+  select(boro, score, grade) %>% 
   group_by(boro) %>% 
   filter(score != "NA",
+         grade == "A",
          boro != "Missing") %>% 
-  ggplot(aes(x = boro, y = score)) +
-  geom_boxplot() +
-  labs(
-    title = "Distribution of scores for the restaurant",
-    x = "Location",
-    y = "Score"
+  plot_ly(
+    y = ~score,
+    color =~boro,
+    type = "box",
+    colors = "viridis"
   )
 ```
 
@@ -58,20 +56,19 @@ rest_inspec %>%
 ## Make a line plot about the number of Korean and American Restaurant in different locations
 ```{r}
 rest_inspec %>% 
-  select(boro, critical_flag) %>% 
-  group_by(boro, critical_flag) %>% 
-  filter(boro != "Missing") %>% 
+  select(boro, critical_flag, grade) %>% 
+  filter(boro == "MANHATTAN") %>% 
+  group_by(grade, critical_flag) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = critical_flag, y = count, color = boro, group = boro))+
-  geom_point() +
-  geom_line() +
-  labs(
-    x = "Status of critical flag",
-    y = "Count",
-    title = "Status of critical flag in different locations"
+  filter(grade !="Not Yet Graded") %>% 
+  plot_ly(
+    x =~critical_flag,
+    y =~count,
+    color = ~grade,
+    type = "scatter",
+    mode = "marker"
   )
-
 ```
 
