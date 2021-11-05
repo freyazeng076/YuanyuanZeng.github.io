@@ -1,0 +1,77 @@
+---
+title: "Plotly"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+---
+This page is about making some plots about NYC Restaurant Inspection Results
+
+Load packages
+```{r, encho = FALSE, console = FALSE, Warming = FALSE, Message = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+library(plotly)
+```
+
+Load the data
+```{r}
+data("rest_inspec")
+```
+
+## Make a histogram about the number of grade A, B, and C restaurant 
+```{r}
+rest_inspec %>%
+  select(boro, grade) %>% 
+  filter(grade == c("A", "B", "C")) %>% 
+  group_by(boro, grade) %>% 
+  filter(boro !="Missing") %>% 
+  ggplot(aes(x = boro, fill = grade)) +
+  geom_bar() +
+  labs(
+    title = "Number of Grade A, B and C restaurant",
+    x = "Location",
+    y = "Number of Restaurant"
+  )
+  
+```
+
+
+## Make boxplot about the distribution of score of restaurant in different locations
+```{r}
+rest_inspec %>% 
+  select(boro, score) %>% 
+  group_by(boro) %>% 
+  filter(score != "NA",
+         boro != "Missing") %>% 
+  ggplot(aes(x = boro, y = score)) +
+  geom_boxplot() +
+  labs(
+    title = "Distribution of scores for the restaurant",
+    x = "Location",
+    y = "Score"
+  )
+```
+
+
+## Make a line plot about the number of Korean and American Restaurant in different locations
+```{r}
+rest_inspec %>% 
+  select(boro, critical_flag) %>% 
+  group_by(boro, critical_flag) %>% 
+  filter(boro != "Missing") %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = critical_flag, y = count, color = boro, group = boro))+
+  geom_point() +
+  geom_line() +
+  labs(
+    x = "Status of critical flag",
+    y = "Count",
+    title = "Status of critical flag in different locations"
+  )
+
+```
+
